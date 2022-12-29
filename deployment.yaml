@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stackmap-mapserver-service
+spec:
+  selector:
+    app: stackmap-mapserver
+  ports:
+  - name: "http"
+    protocol: "TCP"
+    port: 6000
+    targetPort: 80
+  - name: "https"
+    protocol: "TCP"
+    port: 6443
+    targetPort: 443
+  type: LoadBalancer
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mapserver
+spec:
+  selector:
+    matchLabels:
+      app: mapserver
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mapserver
+    spec:
+      
+      containers:
+      - name: mapserver
+        image: camptocamp/mapserver 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: shared-mapfiles-volume
+          mountPath: /mapfiles/
+        env:
+        - name: MS_DEBUGLEVEL
+          value: "5"
+        - name: MS_MAPFILE
+          value: /mapfiles/rasters.map
+
+      - name: msrv-config-runner
+        image: msrv-config-runner:latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: 500Mi
+            cpu: 0.5
+          limits:
+            memory: 500Mi
+            cpu: 0.5
+        env:
+        - name: APIHOST
+          value: http://psqlapi-service.default.svc.cluster.local:3003 #psqlapi-service.default.svc.cluster.local:3003/api/v1/products
+        - name: PSQLHOST
+          value: postgresql.default.svc.cluster.local
+        - name: PSQLUSER
+          value: postgres
+        - name: PSQLDB
+          value: postgres 
+        - name: PSQLPASS
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: postgres-password
+        volumeMounts:
+        - name: shared-mapfiles-volume
+          mountPath: /mapfiles/
+
+      # initContainer:
+      #   - name: 
+      #     image: msrv-config-runner
+      #     command: ["/bin/sh", "-c", "cp -R /app/data/rasters.map /mapfiles/"]
+      #     volumeMounts:
+      #     - name: shared-mapfiles-volume
+      #       mountPath: /mapfiles
+      volumes:
+        - name: shared-mapfiles-volume
+          emptyDir: {}
+          #medium: Memory
+          #sizeLimit: 100Mi
+#        
