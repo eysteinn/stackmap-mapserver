@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: stackmap-mapserver-service
+  name: stackmap-mapserver
 spec:
   selector:
     app: stackmap-mapserver
@@ -14,7 +14,7 @@ spec:
     protocol: "TCP"
     port: 6443
     targetPort: 443
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 
@@ -25,12 +25,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: mapserver
+      app: stackmap-mapserver
   replicas: 3
   template:
     metadata:
       labels:
-        app: mapserver
+        app: stackmap-mapserver
     spec:
       
       containers:
