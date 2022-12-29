@@ -1,4 +1,4 @@
-module sidecar
+module gitlab.com/EysteinnSig/stackmap-mapserver
 
 go 1.19
 
