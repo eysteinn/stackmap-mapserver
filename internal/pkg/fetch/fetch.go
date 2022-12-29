@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sidecar/internal/pkg/format"
-	"sidecar/internal/pkg/logger"
-	"sidecar/internal/pkg/types"
 	"sort"
+
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/format"
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/logger"
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/types"
 )
 
 func FetchAllProducts(outdir string, apihost string, sqldata types.SQLData) error {
