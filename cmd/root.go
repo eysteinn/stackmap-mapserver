@@ -6,17 +6,18 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"sidecar/internal/pkg/fetch"
-	"sidecar/internal/pkg/logger"
-	"sidecar/internal/pkg/types"
 	"time"
+
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/fetch"
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/logger"
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/types"
 
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "sidecar",
+	Use:   "Mapserver",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:

@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"os"
-	"sidecar/internal/pkg/types"
 	"text/template"
+
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/types"
 )
 
 func GetTemplateMapfile(product string) (string, error) {
