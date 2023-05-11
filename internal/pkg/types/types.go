@@ -8,6 +8,9 @@ import (
 type UniqueProducts struct {
 	Products []string `json:"uniqueproducts"`
 }
+type UniqueProjects struct {
+	Projects []string `json:"projects"`
+}
 
 type ProductTimes struct {
 	Product string      `json:"product"`
@@ -23,6 +26,7 @@ type SQLData struct {
 type MapLayerData struct {
 	ProductTimes
 	SQLData
+	Project     string
 	StartRange  time.Time
 	EndRange    time.Time
 	DefaultTime time.Time

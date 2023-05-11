@@ -20,7 +20,7 @@ MAP
   #EXTENT        166221 -371954 1505849 632767 # LAEA
   #EXTENT         -97.5 41.619778 -82.122902 49.38562 # Geographic
   SIZE           400 300
-  SHAPEPATH      "/etc/mapserver/mapdata"
+  SHAPEPATH      "/data/"
   #SHAPEPATH      "../data"
   #SYMBOLSET      "../symbols/symbols.txt"
   #FONTSET        "../fonts/fonts.txt"
@@ -62,7 +62,8 @@ MAP
     # This is the EPSG code for Lambert Azimuthal Equal-Area
     # projection for the U.S.
     #"init=epsg:2163"
-    "init=epsg:4326"
+    #"init=epsg:4326"
+     "init=epsg:3857"
   END
   
   INCLUDE "products.map"

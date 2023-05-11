@@ -15,6 +15,9 @@ run-docker: build-docker
 	docker run $(BIN):$(BUILDVERSION)
 	#docker run -p 3000:3000 api-rest:$(BUILDVERSION)
 
+kind-deldeployment:
+	kubectl delete deployments/mapserver	
+
 kind-load: build-docker
 	kind load docker-image $(BIN):$(BUILDVERSION)
 
