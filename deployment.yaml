@@ -26,7 +26,7 @@ spec:
   selector:
     matchLabels:
       app: stackmap-mapserver
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -43,11 +43,15 @@ spec:
         volumeMounts:
         - name: shared-mapfiles-volume
           mountPath: /mapfiles/
+        - name: nfs
+          mountPath: "/data/"
         env:
         - name: MS_DEBUGLEVEL
           value: "5"
         - name: MS_MAPFILE
           value: /mapfiles/rasters.map
+        - name: MS_MAP_PATTERN
+          value: ".*"
 
       - name: msrv-config-runner
         image: msrv-config-runner:latest
@@ -60,6 +64,8 @@ spec:
             memory: 500Mi
             cpu: 0.5
         env:
+        - name: MAPFILESDIR
+          value: /mapfiles/
         - name: APIHOST
           value: http://psqlapi-service.default.svc.cluster.local:3003 #psqlapi-service.default.svc.cluster.local:3003/api/v1/products
         - name: PSQLHOST
@@ -73,9 +79,18 @@ spec:
             secretKeyRef:
               name: postgresql
               key: postgres-password
+        - name: RABBITMQ_HOST
+          value: stackmap-rabbitmq.default.svc.cluster.local
+        - name: RABBITMQ_PASS
+          valueFrom:
+            secretKeyRef:
+              name: stackmap-rabbitmq
+              key: rabbitmq-password
         volumeMounts:
         - name: shared-mapfiles-volume
           mountPath: /mapfiles/
+            # name must match the volume name below
+
 
       # initContainer:
       #   - name: 
@@ -89,4 +104,8 @@ spec:
           emptyDir: {}
           #medium: Memory
           #sizeLimit: 100Mi
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: nfs
+
 #        

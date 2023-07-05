@@ -4,12 +4,13 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
-	"time"
+	"path/filepath"
 
 	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/fetch"
 	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/logger"
+	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/rabbitmq"
 	"gitlab.com/EysteinnSig/stackmap-mapserver/internal/pkg/types"
 
 	"github.com/spf13/cobra"
@@ -37,7 +38,7 @@ to quickly create a Cobra application.`,
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		log.Panic(err)
 	}
 }
 
@@ -71,18 +72,36 @@ func run() {
 	sqldata.SQLDB = getEnv("PSQLDB", "postgres")
 	sqldata.SQLHost = getEnv("PSQLHOST", "psqlapi-service.default.svc.cluster.local")
 	apiHost := getEnv("APIHOST", "")
+	mapfilesdir := getEnv("MAPFILESDIR", "/mapfiles/")
 
-	err := fetch.FetchAllProducts("./mapfiles/", apiHost, sqldata)
+	projects := types.UniqueProjects{}
+	err := fetch.GetData(apiHost+"/api/v1/projects", &projects)
 	if err != nil {
-		logger.GetLogger().Panic(err)
+		logger.GetLogger().Fatal(err)
+		log.Print(err)
+	}
+	log.Print("Found ", len(projects.Projects), "projects")
+
+	for _, project := range projects.Projects {
+		//err := fetch.FetchAllProducts("./mapfiles/", apiHost, sqldata)
+		logger.GetLogger().Info("Fetching products for: ", project)
+		outdir := filepath.Join(mapfilesdir, project)
+		/*err = os.MkdirAll(outdir, 0655) // 0700)
+		if err != nil {
+			logger.GetLogger().Fatal(err)
+		}*/
+		err := fetch.FetchAllProducts(outdir, apiHost, project, sqldata)
+		if err != nil {
+			logger.GetLogger().Panic(err)
+		}
 	}
 
-	fmt.Println("Going to sleep")
+	/*fmt.Println("Going to sleep")
 	for {
 		time.Sleep(time.Second)
-	}
-	/*err = rabbitmq.DoRabbitMQ()
+	}*/
+	err = rabbitmq.DoRabbitMQ("./mapfiles/", apiHost, sqldata)
 	if err != nil {
 		logger.GetLogger().Panic(err)
-	}*/
+	}
 }
