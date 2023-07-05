@@ -8,7 +8,7 @@ run:
 	go run bin/msrv-cinfig-runner
 
 
-build-docker: build
+build-docker: #build
 	docker build . -t $(BIN):$(BUILDVERSION)
 
 run-docker: build-docker
