@@ -25,7 +25,7 @@ kind-deploy: build-docker
 	kind load docker-image $(BIN):$(BUILDVERSION) && kubectl apply -f deployment.yaml 
 
 k3s-deploy:
-	docker save $(DOCKERIMAGE) | sudo k3s ctr images import -
+	docker save $(BIN):$(BUILDVERSION) | sudo k3s ctr images import -
 
 #swagger-build:
 #	swagger generate spec -i ./swagger/swagger_base.yaml -o ./swagger.yaml
