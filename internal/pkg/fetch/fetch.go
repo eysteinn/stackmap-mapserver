@@ -34,6 +34,11 @@ func FetchAllProducts(outdir string, apihost string, project string, sqldata typ
 		prodstr += fmt.Sprintf("INCLUDE \"product_%s.map\"\n", prod)
 
 	}
+	err = os.MkdirAll(outdir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
 	err = os.WriteFile(filepath.Join(outdir, "products.map"), []byte(prodstr), 0644)
 	if err != nil {
 		return err

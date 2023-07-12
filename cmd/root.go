@@ -38,7 +38,7 @@ to quickly create a Cobra application.`,
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 }
 
