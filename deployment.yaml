@@ -35,7 +35,7 @@ spec:
       
       containers:
       - name: mapserver
-        image: camptocamp/mapserver 
+        image: camptocamp/mapserver:8.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
@@ -44,12 +44,14 @@ spec:
         - name: shared-mapfiles-volume
           mountPath: /mapfiles/
         - name: nfs
-          mountPath: "/data/"
+          mountPath: /data/
         env:
         - name: MS_DEBUGLEVEL
           value: "5"
         - name: MS_MAPFILE
           value: /mapfiles/rasters.map
+        - name: MS_MAPFILE_PATTERN
+          value: ".*"
         - name: MS_MAP_PATTERN
           value: ".*"
 
@@ -67,9 +69,11 @@ spec:
         - name: MAPFILESDIR
           value: /mapfiles/
         - name: APIHOST
-          value: http://psqlapi-service.default.svc.cluster.local:3003 #psqlapi-service.default.svc.cluster.local:3003/api/v1/products
+          value: http://stackmap-api.default.svc.cluster.local:3000
+            #value: http://psqlapi-service.default.svc.cluster.local:3003 #psqlapi-service.default.svc.cluster.local:3003/api/v1/products
         - name: PSQLHOST
-          value: postgresql.default.svc.cluster.local
+          value: stackmap-db-postgresql.default.svc.cluster.local
+          #value: postgresql.default.svc.cluster.local
         - name: PSQLUSER
           value: postgres
         - name: PSQLDB
@@ -77,7 +81,7 @@ spec:
         - name: PSQLPASS
           valueFrom:
             secretKeyRef:
-              name: postgresql
+              name: stackmap-db-postgresql
               key: postgres-password
         - name: RABBITMQ_HOST
           value: stackmap-rabbitmq.default.svc.cluster.local
