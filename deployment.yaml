@@ -17,7 +17,26 @@ spec:
   type: ClusterIP
 
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wms
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: stackmap.clouds.is
+    http:
+      paths:
+      - path: /services/wms
+        pathType: Prefix
+        backend:
+          service:
+            name: stackmap-mapserver
+            port:
+              number: 6000
 
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
