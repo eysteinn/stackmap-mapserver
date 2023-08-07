@@ -16,26 +16,48 @@ spec:
     targetPort: 443
   type: ClusterIP
 
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: wms
+# spec:
+#   ingressClassName: traefik
+#   rules:
+#   - host: stackmap.clouds.is
+#     http:
+#       paths:
+#       - path: /services/wms
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: stackmap-mapserver
+#             port:
+#               number: 6000
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
-  name: wms
+  name: mapserver
 spec:
-  ingressClassName: traefik
-  rules:
-  - host: stackmap.clouds.is
-    http:
-      paths:
-      - path: /services/wms
-        pathType: Prefix
-        backend:
-          service:
-            name: stackmap-mapserver
-            port:
-              number: 6000
-
-
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`stackmap.clouds.is`) && PathPrefix(`/services/wms`)
+      kind: Rule
+      services:
+        - name: stackmap-mapserver
+          port: 6000
+      middlewares:
+        - name: mapserver-stripprefix
+---  
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: mapserver-stripprefix
+spec:
+  replacePath:
+    path: /
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -51,7 +73,6 @@ spec:
       labels:
         app: stackmap-mapserver
     spec:
-      
       containers:
       - name: mapserver
         image: camptocamp/mapserver:8.0
