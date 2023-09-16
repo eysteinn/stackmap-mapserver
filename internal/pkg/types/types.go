@@ -6,10 +6,10 @@ import (
 )
 
 type UniqueProducts struct {
-	Products []string `json:"uniqueproducts"`
+	Products []string `json:"product_names"`
 }
 type UniqueProjects struct {
-	Projects []string `json:"projects"`
+	Projects []string `json:"project_names"`
 }
 
 type ProductTimes struct {
