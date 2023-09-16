@@ -73,6 +73,8 @@ spec:
       labels:
         app: stackmap-mapserver
     spec:
+      imagePullSecrets:
+      - name: ghcr-login-secret
       containers:
       - name: mapserver
         image: camptocamp/mapserver:8.0
@@ -96,8 +98,8 @@ spec:
           value: ".*"
 
       - name: msrv-config-runner
-        image: msrv-config-runner:latest
-        imagePullPolicy: IfNotPresent
+        image: ghcr.io/eysteinn/msrv-config-runner:latest
+        imagePullPolicy: Always
         resources:
           requests:
             memory: 500Mi
